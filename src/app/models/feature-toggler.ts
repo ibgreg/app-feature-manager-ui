@@ -1,9 +1,8 @@
 export interface FeatureToggler {
     id?: number;
     displayName?: string;
-    technicalName: string;
+    technicalName?: string;
     expiresOn?: string;
     description?: string;
-    inverted: boolean;
-    customerIds: string[];
+    inverted?: boolean;
 }

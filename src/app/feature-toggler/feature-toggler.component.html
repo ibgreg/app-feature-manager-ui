@@ -3,7 +3,9 @@
     <div class="col-12">
         <div class="container">
             
-            <button class="btn btn-primary btn-round" type="button" (click)="open(content)"><i class="bi bi-plus-circle-fill"></i> New Feature Toggler</button>
+            <button class="btn btn-primary btn-round" type="button" (click)="openModal(undefined, content)">
+                <i class="bi bi-plus-lg"></i> New Feature Toggler
+            </button>
         </div>
     </div>
 
@@ -12,19 +14,29 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
                         <th scope="col">Technical Name</th>
                         <th scope="col">Display Name</th>
                         <th scope="col">Description</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @for (toggler of togglersList; track toggler.id; let i = $index) {
                         <tr>
-                            <th scope="row">{{ i + 1 }}</th>
                             <td>{{ toggler.technicalName }}</td>
                             <td>{{ toggler.displayName }}</td>
                             <td>{{ toggler.description }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+
+                                    <button type="button" (click)="openModal(toggler, content)" class="btn btn-info btn-icon btn-round btn-sm">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    <button type="button" (click)="archiveFeatureToggler(toggler)" class="btn btn-danger btn-icon btn-round btn-sm">
+                                        <i class="bi bi-archive-fill"></i>
+                                    </button>
+                                </div>
+                              </td>              
                         </tr>
                     }
                 </tbody>
@@ -42,7 +54,7 @@
 		<form [formGroup]="featureForm">
 
             <div class="mb-3">
-                <label for="display-name" class="form-label">Display Name </label>
+                <label for="display-name" class="form-label">Display Name</label>
                 <input id="display-name" class="form-control" type="text" formControlName="displayName">
             </div>
 
@@ -66,6 +78,19 @@
           </form>
 	</div>
 	<div class="modal-footer">
-		<button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+		<button type="button" class="btn btn-success" (click)="saveFeatureToggler()">Save</button>
 	</div>
+</ng-template>
+
+<ng-template #removeFeature let-c="close" let-d="dismiss">
+    <div class="modal-header justify-content-center">
+        <h4 class="title title-up">Archive Feature Toggler</h4>
+    </div>
+    <div class="modal-body">
+        <p>Are you sure you want to archive the selected feature toggler?</p>
+    </div>
+    <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-primary btn-round" (click)="archiveFeatureToggler(null)"><i class="fas fa-check"></i> Sim</button> -->
+        <button type="button" class="btn btn-danger btn-round" (click)="closeModal()"><i class="fas fa-times"></i> Não</button>
+    </div>
 </ng-template>

@@ -1,7 +1,6 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FeatureToggler } from '../models/feature-toggler';
 import { FeatureTogglerService } from '../service/feature-toggler.service';
 
@@ -9,7 +8,7 @@ import { FeatureTogglerService } from '../service/feature-toggler.service';
   selector: 'app-feature-toggler',
   standalone: true,
   imports: [
-    DecimalPipe,
+    NgbDatepickerModule,
     ReactiveFormsModule
   ],
   templateUrl: './feature-toggler.component.html',
@@ -25,31 +24,90 @@ export class FeatureTogglerComponent implements OnInit {
     technicalName: ['', [Validators.required]],
     expiresOn: ['', []],
     description: ['', []],
-    inverted: [false, [Validators.required]],
+    inverted: [false, []]
   });
 
   togglersList: FeatureToggler[] = [];
 
+  togglerRequest: FeatureToggler = {};
+
   ngOnInit(): void {
-    this.featureTogglerService.findAll()
-            .subscribe({
-              next: response => {
-                this.togglersList = response
-                console.log(this.togglersList);
-                
-              }
-            });
+    this.loadFeatureTogglers();
   }
 
-  open(content: TemplateRef<any>) {
-		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
-			(result) => {
-				//this.closeResult = `Closed with: ${result}`;
-			},
-			(reason) => {
-				//this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-			},
-		);
-	}
+  openModal(toggler?: FeatureToggler, content?: TemplateRef<any>) {
+    if (toggler?.id) {
+      this.togglerRequest = toggler;
+      this.featureForm.patchValue(this.togglerRequest);
+    }
+    
+    console.log(this.togglerRequest);
+    this.modalService.open(content, { size: 'lg' });
+  }
 
+  closeModal() {
+    this.togglerRequest = {}
+    this.featureForm.reset();
+    this.modalService.dismissAll();
+  }
+
+  saveFeatureToggler() {
+    if (this.featureForm.invalid) {
+      return;
+    }
+
+    console.log(this.togglerRequest);
+
+    
+    if (this.togglerRequest?.id) {
+      const selectedTogglerId = this.togglerRequest?.id;
+      
+      this.togglerRequest = this.featureForm.value as FeatureToggler;
+      this.togglerRequest.id = selectedTogglerId;
+      console.log(this.togglerRequest);    
+
+
+        this.featureTogglerService.updateFeatureToggler(this.togglerRequest)
+          .subscribe({
+            next: response => {
+              this.loadFeatureTogglers();
+              this.closeModal();
+            },
+            error: (e) => console.error(e),
+          });
+    } else {
+      this.featureTogglerService.createFeatureToggler(this.featureForm.value as FeatureToggler)
+        .subscribe({
+          next: response => {
+            this.loadFeatureTogglers();
+            this.closeModal();
+          },
+          error: (e) => console.error(e),
+        });
+    }
+  }
+
+  archiveFeatureToggler(toggler: FeatureToggler) {
+    this.featureTogglerService.archiveFeatureToggler(toggler.id!)
+            .subscribe({
+              next: response => {
+                console.log("Feature archived");
+                
+                this.loadFeatureTogglers();
+                this.closeModal();
+              },
+              error: (e) => this.closeModal()
+            })
+  }
+
+  private loadFeatureTogglers() {
+    this.featureTogglerService.findAll()
+      .subscribe({
+        next: response => {
+          this.togglersList = response
+          console.log(this.togglersList);
+          
+        }
+      });
+  }
 }

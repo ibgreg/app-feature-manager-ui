@@ -1,0 +1,71 @@
+
+<div class="row">
+    <div class="col-12">
+        <div class="container">
+            
+            <button class="btn btn-primary btn-round" type="button" (click)="open(content)"><i class="bi bi-plus-circle-fill"></i> New Feature Toggler</button>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Technical Name</th>
+                        <th scope="col">Display Name</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (toggler of togglersList; track toggler.id; let i = $index) {
+                        <tr>
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>{{ toggler.technicalName }}</td>
+                            <td>{{ toggler.displayName }}</td>
+                            <td>{{ toggler.description }}</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">New Feature Toggler</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<form [formGroup]="featureForm">
+
+            <div class="mb-3">
+                <label for="display-name" class="form-label">Display Name </label>
+                <input id="display-name" class="form-control" type="text" formControlName="displayName">
+            </div>
+
+            <div class="mb-3">
+                <label for="technical-name" class="form-label">Technical Name</label>
+                <input id="technical-name" class="form-control" type="text" formControlName="technicalName">
+            </div>
+
+            <div class="mb-3">
+                <label for="expiration-date" class="form-label">Expires On</label>
+                <input id="expiration-date" class="form-control" type="text" formControlName="expiresOn">
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input id="description" class="form-control" type="text" formControlName="description">
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="inverted-feature" formControlName="inverted">
+                <label class="form-check-label" for="inverted-feature">Invert Feature</label>
+            </div>          
+          </form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+	</div>
+</ng-template>

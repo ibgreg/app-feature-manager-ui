@@ -1,14 +1,15 @@
 import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbDatepickerModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FeatureToggler } from '../models/feature-toggler';
 import { FeatureTogglerService } from '../service/feature-toggler.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-feature-toggler',
   standalone: true,
   imports: [
-    NgbDatepickerModule,
+    CommonModule,
     ReactiveFormsModule
   ],
   templateUrl: './feature-toggler.component.html',
@@ -35,13 +36,21 @@ export class FeatureTogglerComponent implements OnInit {
     this.loadFeatureTogglers();
   }
 
-  openModal(toggler?: FeatureToggler, content?: TemplateRef<any>) {
+  openModal(toggler?: FeatureToggler, modalTemplate?: TemplateRef<any>) {
     if (toggler?.id) {
       this.togglerRequest = toggler;
       this.featureForm.patchValue(this.togglerRequest);
     }
     
-    console.log(this.togglerRequest);
+    this.modalService.open(modalTemplate, { size: 'lg' });
+  }
+
+  openArchiveModal(toggler?: FeatureToggler, content?: TemplateRef<any>) {
+    if (toggler?.id) {
+      this.togglerRequest = toggler;
+      this.featureForm.patchValue(this.togglerRequest);
+    }
+    
     this.modalService.open(content, { size: 'lg' });
   }
 
@@ -87,8 +96,8 @@ export class FeatureTogglerComponent implements OnInit {
     }
   }
 
-  archiveFeatureToggler(toggler: FeatureToggler) {
-    this.featureTogglerService.archiveFeatureToggler(toggler.id!)
+  archiveFeatureToggler() {
+    this.featureTogglerService.archiveFeatureToggler(this.togglerRequest.id!)
             .subscribe({
               next: response => {
                 console.log("Feature archived");

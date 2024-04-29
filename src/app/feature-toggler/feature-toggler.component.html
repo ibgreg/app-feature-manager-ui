@@ -3,7 +3,7 @@
     <div class="col-12">
         <div class="container">
             
-            <button class="btn btn-primary btn-round" type="button" (click)="openModal(undefined, content)">
+            <button class="btn btn-primary btn-round" type="button" (click)="openModal(undefined, featureData)">
                 <i class="bi bi-plus-lg"></i> New Feature Toggler
             </button>
         </div>
@@ -17,6 +17,7 @@
                         <th scope="col">Technical Name</th>
                         <th scope="col">Display Name</th>
                         <th scope="col">Description</th>
+                        <th scope="col">Expires on</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -26,13 +27,13 @@
                             <td>{{ toggler.technicalName }}</td>
                             <td>{{ toggler.displayName }}</td>
                             <td>{{ toggler.description }}</td>
+                            <td>{{ toggler.expiresOn | date: "yyyy-MM-dd hh:mm:ss" }}</td>
                             <td>
                                 <div class="btn-group" role="group">
-
-                                    <button type="button" (click)="openModal(toggler, content)" class="btn btn-info btn-icon btn-round btn-sm">
+                                    <button type="button" (click)="openModal(toggler, featureData)" class="btn btn-info btn-icon btn-round btn-sm">
                                         <i class="bi bi-pencil-fill"></i>
                                     </button>
-                                    <button type="button" (click)="archiveFeatureToggler(toggler)" class="btn btn-danger btn-icon btn-round btn-sm">
+                                    <button type="button" (click)="openModal(toggler, removeFeature)" class="btn btn-danger btn-icon btn-round btn-sm">
                                         <i class="bi bi-archive-fill"></i>
                                     </button>
                                 </div>
@@ -45,10 +46,10 @@
     </div>
 </div>
 
-<ng-template #content let-modal>
+<ng-template #featureData let-modal>
 	<div class="modal-header">
 		<h4 class="modal-title" id="modal-basic-title">New Feature Toggler</h4>
-		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+		<button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
 	</div>
 	<div class="modal-body">
 		<form [formGroup]="featureForm">
@@ -61,11 +62,17 @@
             <div class="mb-3">
                 <label for="technical-name" class="form-label">Technical Name</label>
                 <input id="technical-name" class="form-control" type="text" formControlName="technicalName">
+                @if (featureForm.controls['technicalName'].invalid && 
+                    (featureForm.controls['technicalName'].dirty 
+                        || featureForm.controls['technicalName'].touched)) {
+                    <p class="text-danger text-left validation-error">Required field</p>
+                }
             </div>
 
             <div class="mb-3">
                 <label for="expiration-date" class="form-label">Expires On</label>
-                <input id="expiration-date" class="form-control" type="text" formControlName="expiresOn">
+                <input id="expiration-date" class="form-control" 
+                    type="text" formControlName="expiresOn" mask="d0/M0/0000 Hh:m0:s0" >
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
@@ -79,6 +86,7 @@
 	</div>
 	<div class="modal-footer">
 		<button type="button" class="btn btn-success" (click)="saveFeatureToggler()">Save</button>
+        <button type="button" class="btn btn-danger" (click)="closeModal()">Cancel</button>
 	</div>
 </ng-template>
 
@@ -90,7 +98,11 @@
         <p>Are you sure you want to archive the selected feature toggler?</p>
     </div>
     <div class="modal-footer">
-        <!-- <button type="button" class="btn btn-primary btn-round" (click)="archiveFeatureToggler(null)"><i class="fas fa-check"></i> Sim</button> -->
-        <button type="button" class="btn btn-danger btn-round" (click)="closeModal()"><i class="fas fa-times"></i> Não</button>
+        <button type="button" class="btn btn-primary btn-round" (click)="archiveFeatureToggler()">
+            <i class="bi bi-check-lg"></i> Yes
+        </button>
+        <button type="button" class="btn btn-danger btn-round" (click)="closeModal()">
+            <i class="bi bi-x-lg"></i> Não
+        </button>
     </div>
 </ng-template>

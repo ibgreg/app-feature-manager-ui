@@ -4,6 +4,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FeatureToggler } from '../models/feature-toggler';
 import { FeatureTogglerService } from '../service/feature-toggler.service';
 import { CommonModule } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
+import { User } from '../models/user';
+import { UsersService } from '../service/users.service';
 
 @Component({
   selector: 'app-feature-toggler',
@@ -19,6 +22,8 @@ export class FeatureTogglerComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private modalService = inject(NgbModal);
   private featureTogglerService = inject(FeatureTogglerService);
+  //private userService = inject(UsersService);
+  private toastr = inject(ToastrService);
   
   featureForm = this.formBuilder.group({
     displayName: ['', []],
@@ -28,13 +33,29 @@ export class FeatureTogglerComponent implements OnInit {
     inverted: [false, []]
   });
 
+  userList: User[] = [];
+  selectedUser?: User;
   togglersList: FeatureToggler[] = [];
 
   togglerRequest: FeatureToggler = {};
 
   ngOnInit(): void {
     this.loadFeatureTogglers();
+
+    /*
+    this.userService.loadAllUsers()
+      .subscribe({
+        next: response => {
+          this.userList = response
+          console.log(this.userList);
+          
+        }
+      });*/
   }
+
+   /*addUser() {
+    console.log(this.selectedUser);
+  }*/
 
   openModal(toggler?: FeatureToggler, modalTemplate?: TemplateRef<any>) {
     if (toggler?.id) {
@@ -64,21 +85,18 @@ export class FeatureTogglerComponent implements OnInit {
     if (this.featureForm.invalid) {
       return;
     }
-
-    console.log(this.togglerRequest);
-
     
     if (this.togglerRequest?.id) {
       const selectedTogglerId = this.togglerRequest?.id;
       
       this.togglerRequest = this.featureForm.value as FeatureToggler;
       this.togglerRequest.id = selectedTogglerId;
-      console.log(this.togglerRequest);    
 
 
-        this.featureTogglerService.updateFeatureToggler(this.togglerRequest)
-          .subscribe({
+      this.featureTogglerService.updateFeatureToggler(this.togglerRequest)
+        .subscribe({
             next: response => {
+              this.toastr.success("Feature toggler has been updated");
               this.loadFeatureTogglers();
               this.closeModal();
             },
@@ -88,6 +106,7 @@ export class FeatureTogglerComponent implements OnInit {
       this.featureTogglerService.createFeatureToggler(this.featureForm.value as FeatureToggler)
         .subscribe({
           next: response => {
+            this.toastr.success("Feature toggler has been created");
             this.loadFeatureTogglers();
             this.closeModal();
           },
@@ -100,7 +119,7 @@ export class FeatureTogglerComponent implements OnInit {
     this.featureTogglerService.archiveFeatureToggler(this.togglerRequest.id!)
             .subscribe({
               next: response => {
-                console.log("Feature archived");
+                this.toastr.success("Feature toggler has been archived");
                 
                 this.loadFeatureTogglers();
                 this.closeModal();
@@ -114,8 +133,6 @@ export class FeatureTogglerComponent implements OnInit {
       .subscribe({
         next: response => {
           this.togglersList = response
-          console.log(this.togglersList);
-          
         }
       });
   }

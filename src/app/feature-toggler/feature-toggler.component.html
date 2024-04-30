@@ -81,7 +81,46 @@
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="inverted-feature" formControlName="inverted">
                 <label class="form-check-label" for="inverted-feature">Invert Feature</label>
-            </div>          
+            </div>
+            <!--
+            <div class="mb-3">
+                <label for="expiration-date" class="form-label">Users Granted</label>
+                <select class="form-select mb-3" ngModel="selectedUser">
+                    <option selected>Select User</option>
+                    @for (user of userList; track user.id) {
+                        <option [value]="user.id">{{user.name}}</option>
+                    }
+                </select>
+                <button type="button" class="btn btn-primary" (click)="addUser()">Add User</button>
+            </div>
+            @if (togglerRequest.usersGranted!) {
+                <div class="col-12">
+                    <div class="container">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">User Name</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (user of togglerRequest.usersGranted; track user.id; let i = $index) {
+                                    <tr>
+                                        <td>{{ user.name }}</td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" (click)="openModal(user, removeFeature)" class="btn btn-danger btn-icon btn-round btn-sm">
+                                                    <i class="bi bi-archive-fill"></i>
+                                                </button>
+                                            </div>
+                                        </td> 
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>      
+            }  -->
           </form>
 	</div>
 	<div class="modal-footer">
@@ -102,7 +141,7 @@
             <i class="bi bi-check-lg"></i> Yes
         </button>
         <button type="button" class="btn btn-danger btn-round" (click)="closeModal()">
-            <i class="bi bi-x-lg"></i> Não
+            <i class="bi bi-x-lg"></i> No
         </button>
     </div>
 </ng-template>

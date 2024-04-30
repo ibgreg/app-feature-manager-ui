@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export interface FeatureToggler {
     id?: number;
     displayName?: string;
@@ -5,4 +7,5 @@ export interface FeatureToggler {
     expiresOn?: string;
     description?: string;
     inverted?: boolean;
+    usersGranted?: User[];
 }
